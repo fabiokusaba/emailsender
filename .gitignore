@@ -1,0 +1,32 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Vendor directory (if using Go modules and vendored dependencies)
+vendor/
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Build and temporary directories
+bin/
+build/
+dist/
+tmp/
