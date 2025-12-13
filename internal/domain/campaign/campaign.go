@@ -3,7 +3,7 @@ package campaign
 import (
 	"time"
 
-	"github.com/fabiokusaba/emailsender/internal/internalerrors"
+	"github.com/fabiokusaba/emailsender/internal/infra/validator"
 	"github.com/rs/xid"
 )
 
@@ -34,7 +34,7 @@ func NewCampaign(name, content string, emails []string) (*Campaign, error) {
 		Contacts:  contacts,
 	}
 
-	err := internalerrors.ValidateStruct(campaign)
+	err := validator.ValidateStruct(campaign)
 	if err != nil {
 		return nil, err
 	}
