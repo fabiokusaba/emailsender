@@ -12,15 +12,13 @@ func ValidateStruct(obj interface{}) error {
 
 	err := validate.Struct(obj)
 
-	// Handle successful validation
 	if err == nil {
 		return nil
 	}
 
-	// Type assert safely
 	validationErrors, ok := err.(validator.ValidationErrors)
 	if !ok {
-		return err // Unexpected error type
+		return err
 	}
 
 	if len(validationErrors) == 0 {
