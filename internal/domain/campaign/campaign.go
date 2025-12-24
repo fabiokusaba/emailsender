@@ -3,7 +3,7 @@ package campaign
 import (
 	"time"
 
-	"github.com/fabiokusaba/emailsender/internal/infra/validator"
+	"github.com/fabiokusaba/emailsender/internal/infrastructure/validator"
 	"github.com/rs/xid"
 )
 
