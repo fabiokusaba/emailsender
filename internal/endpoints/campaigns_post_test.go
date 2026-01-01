@@ -9,22 +9,14 @@ import (
 	"testing"
 
 	"github.com/fabiokusaba/emailsender/internal/contract"
+	"github.com/fabiokusaba/emailsender/internal/test/internalmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-type serviceMock struct {
-	mock.Mock
-}
-
-func (s *serviceMock) Create(newCampaign contract.NewCampaign) (string, error) {
-	args := s.Called(newCampaign)
-	return args.String(0), args.Error(1)
-}
-
 func Test_CampaignsPost_should_save_new_campaign(t *testing.T) {
 	assert := assert.New(t)
-	service := new(serviceMock)
+	service := new(internalmock.CampaignServiceMock)
 	handler := Handler{CampaignService: service}
 
 	body := contract.NewCampaign{
@@ -54,7 +46,7 @@ func Test_CampaignsPost_should_save_new_campaign(t *testing.T) {
 
 func Test_CampaignsPost_should_inform_error_when_exists(t *testing.T) {
 	assert := assert.New(t)
-	service := new(serviceMock)
+	service := new(internalmock.CampaignServiceMock)
 	handler := Handler{CampaignService: service}
 
 	body := contract.NewCampaign{
