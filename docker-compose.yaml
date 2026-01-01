@@ -1,0 +1,9 @@
+services:
+  db:
+    container_name: emailsender
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=pg123
+      - POSTGRES_USER=postgres
+    ports:
+      - 5432:5432
