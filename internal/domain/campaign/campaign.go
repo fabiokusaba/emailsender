@@ -7,15 +7,17 @@ import (
 	"github.com/rs/xid"
 )
 
-type Contact struct {
-	Email string `validate:"email"`
-}
-
 const (
 	Pending string = "Pending"
 	Started string = "Started"
 	Done    string = "Done"
 )
+
+type Contact struct {
+	ID         string
+	Email      string `validate:"email"`
+	CampaignId string
+}
 
 type Campaign struct {
 	ID        string    `validate:"required"`
@@ -31,6 +33,7 @@ func NewCampaign(name, content string, emails []string) (*Campaign, error) {
 
 	for index, email := range emails {
 		contacts[index].Email = email
+		contacts[index].ID = xid.New().String()
 	}
 
 	campaign := &Campaign{
