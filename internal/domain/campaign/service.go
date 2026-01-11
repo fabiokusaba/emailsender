@@ -39,10 +39,11 @@ func (s *ServiceImpl) GetById(id string) (*contract.CompaignResponse, error) {
 	}
 
 	return &contract.CompaignResponse{
-		ID:      campaign.ID,
-		Name:    campaign.Name,
-		Content: campaign.Content,
-		Status:  campaign.Status,
+		ID:                   campaign.ID,
+		Name:                 campaign.Name,
+		Content:              campaign.Content,
+		Status:               campaign.Status,
+		AmountOfEmailsToSend: len(campaign.Contacts),
 	}, nil
 }
 
