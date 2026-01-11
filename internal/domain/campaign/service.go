@@ -1,6 +1,8 @@
 package campaign
 
 import (
+	"errors"
+
 	"github.com/fabiokusaba/emailsender/internal/contract"
 	"github.com/fabiokusaba/emailsender/internal/internalerrors"
 )
@@ -8,6 +10,7 @@ import (
 type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	GetById(id string) (*contract.CompaignResponse, error)
+	Cancel(id string) error
 }
 
 type ServiceImpl struct {
@@ -40,4 +43,24 @@ func (s *ServiceImpl) GetById(id string) (*contract.CompaignResponse, error) {
 		Content: campaign.Content,
 		Status:  campaign.Status,
 	}, nil
+}
+
+func (s *ServiceImpl) Cancel(id string) error {
+	campaign, err := s.Repository.GetById(id)
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	if campaign.Status != Pending {
+		return errors.New("campaign is not available to cancel")
+	}
+
+	campaign.Cancel()
+
+	err = s.Repository.Update(campaign)
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	return nil
 }
