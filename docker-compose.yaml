@@ -7,3 +7,14 @@ services:
       - POSTGRES_USER=postgres
     ports:
       - 5432:5432
+
+  keycloak:
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:21.1.1
+    command:
+      - "start-dev"
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    ports:
+      - 8080:8080
