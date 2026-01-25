@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 
 func Test_CampaignsPost_should_save_new_campaign(t *testing.T) {
 	assert := assert.New(t)
+	createdByExpected := "teste@teste.com.br"
 	service := new(internalmock.CampaignServiceMock)
 	handler := Handler{CampaignService: service}
 
@@ -26,7 +28,10 @@ func Test_CampaignsPost_should_save_new_campaign(t *testing.T) {
 	}
 
 	service.On("Create", mock.MatchedBy(func(request contract.NewCampaign) bool {
-		if request.Name == body.Name && request.Content == body.Content && len(request.Emails) == len(body.Emails) {
+		if request.Name == body.Name &&
+			request.Content == body.Content &&
+			len(request.Emails) == len(body.Emails) &&
+			request.CreatedBy == createdByExpected {
 			return true
 		}
 		return false
@@ -36,6 +41,8 @@ func Test_CampaignsPost_should_save_new_campaign(t *testing.T) {
 	json.NewEncoder(&buf).Encode(body)
 
 	req, _ := http.NewRequest("POST", "/", &buf)
+	ctx := context.WithValue(req.Context(), "email", createdByExpected)
+	req = req.WithContext(ctx)
 	res := httptest.NewRecorder()
 
 	_, status, err := handler.PostCampaign(res, req)
@@ -61,6 +68,8 @@ func Test_CampaignsPost_should_inform_error_when_exists(t *testing.T) {
 	json.NewEncoder(&buf).Encode(body)
 
 	req, _ := http.NewRequest("POST", "/", &buf)
+	ctx := context.WithValue(req.Context(), "email", "teste@teste.com.br")
+	req = req.WithContext(ctx)
 	res := httptest.NewRecorder()
 
 	_, _, err := handler.PostCampaign(res, req)
