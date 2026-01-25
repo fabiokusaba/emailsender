@@ -57,6 +57,10 @@ func NewCampaign(name, content, createdBy string, emails []string) (*Campaign, e
 	return campaign, nil
 }
 
+func (c *Campaign) Done() {
+	c.Status = Done
+}
+
 func (c *Campaign) Cancel() {
 	c.Status = Canceled
 }
