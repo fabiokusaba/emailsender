@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
-	"github.com/dgrijalva/jwt-go"
+	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/render"
 )
 
@@ -36,9 +36,9 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		token, _ := jwt.Parse(tokenString, nil)
-		claims := token.Claims.(jwt.MapClaims)
-		email := claims["email"].(string)
+		token, _ := jwtgo.Parse(tokenString, nil)
+		claims := token.Claims.(jwtgo.MapClaims)
+		email := claims["email"]
 
 		ctx := context.WithValue(r.Context(), "email", email)
 
