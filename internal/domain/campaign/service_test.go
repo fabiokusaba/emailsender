@@ -15,9 +15,10 @@ import (
 
 var (
 	newCampaign = contract.NewCampaign{
-		Name:    "Test Y",
-		Content: "Body Hi!",
-		Emails:  []string{"teste1@test.com"},
+		Name:      "Test Y",
+		Content:   "Body Hi!",
+		Emails:    []string{"teste1@test.com"},
+		CreatedBy: "teste@teste.com",
 	}
 	service = campaign.ServiceImpl{}
 )
@@ -81,7 +82,7 @@ func Test_Create_ValidateRepositorySave(t *testing.T) {
 
 func Test_GetById_ReturnCampaign(t *testing.T) {
 	assert := assert.New(t)
-	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails)
+	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.CreatedBy, newCampaign.Emails)
 
 	repositoryMock := new(internalmock.CampaignRepositoryMock)
 	repositoryMock.On("GetById", mock.MatchedBy(func(id string) bool {
@@ -96,6 +97,7 @@ func Test_GetById_ReturnCampaign(t *testing.T) {
 	assert.Equal(campaign.Name, campaignReturned.Name)
 	assert.Equal(campaign.Content, campaignReturned.Content)
 	assert.Equal(campaign.Status, campaignReturned.Status)
+	assert.Equal(campaign.CreatedBy, campaignReturned.CreatedBy)
 }
 
 func Test_GetById_ReturnErrorWhenSomethingWentWrong(t *testing.T) {
