@@ -12,10 +12,12 @@ type Service interface {
 	GetById(id string) (*contract.CompaignResponse, error)
 	Cancel(id string) error
 	Delete(id string) error
+	SendEmail(id string) error
 }
 
 type ServiceImpl struct {
 	Repository Repository
+	SendMail   func(campaign *Campaign) error
 }
 
 func (s *ServiceImpl) Create(newCampaign contract.NewCampaign) (string, error) {
@@ -81,6 +83,31 @@ func (s *ServiceImpl) Delete(id string) error {
 	campaign.Delete()
 
 	err = s.Repository.Delete(campaign)
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	return nil
+}
+
+func (s *ServiceImpl) SendEmail(id string) error {
+	campaignSaved, err := s.Repository.GetById(id)
+	if err != nil {
+		return internalerrors.ProcessErrorToReturn(err)
+	}
+
+	if campaignSaved.Status != Pending {
+		return errors.New("campaign is not available to send email")
+	}
+
+	err = s.SendMail(campaignSaved)
+	if err != nil {
+		return internalerrors.ErrInternal
+	}
+
+	campaignSaved.Done()
+
+	err = s.Repository.Update(campaignSaved)
 	if err != nil {
 		return internalerrors.ErrInternal
 	}

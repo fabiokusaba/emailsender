@@ -7,6 +7,7 @@ import (
 	"github.com/fabiokusaba/emailsender/internal/domain/campaign"
 	"github.com/fabiokusaba/emailsender/internal/endpoints"
 	"github.com/fabiokusaba/emailsender/internal/infrastructure/database"
+	"github.com/fabiokusaba/emailsender/internal/infrastructure/mail"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
@@ -27,7 +28,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	db := database.NewDb()
-	campaignService := campaign.ServiceImpl{Repository: &database.CampaignRepository{Db: db}}
+	campaignService := campaign.ServiceImpl{
+		Repository: &database.CampaignRepository{Db: db},
+		SendMail:   mail.Send,
+	}
 	handler := endpoints.Handler{CampaignService: &campaignService}
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -41,6 +45,7 @@ func main() {
 		r.Get("/{id}", endpoints.HandlerError(handler.GetCampaignById))
 		r.Patch("/cancel/{id}", endpoints.HandlerError(handler.CampaignsCancelPatch))
 		r.Delete("/delete/{id}", endpoints.HandlerError(handler.DeleteCampaign))
+		r.Patch("/send/{id}", endpoints.HandlerError(handler.SendCampaignsEmail))
 	})
 
 	http.ListenAndServe(":3000", r)
