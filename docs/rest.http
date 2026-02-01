@@ -1,2 +1,50 @@
+@url_api = http://localhost:3000
+@url_keycloak = http://localhost:8080/realms/emailsenderprovider/protocol/openid-connect/token
+
 ### GET
-GET http://localhost:3000
+GET {{url_api}}/health
+
+### POST
+POST {{url_api}}/campaigns
+Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+    "name": "test campaign",
+    "content": "test campaign",
+    "emails": ["test@email.com", "test2@email.com", "test3@email.com"]
+}
+
+### GET 
+GET {{url_api}}/campaigns/d5o1ivqpg3tdn05afe70
+Authorization: Bearer {{access_token}}
+
+### PATCH
+PATCH {{url_api}}/campaigns/cancel/d5bskb2pg3t6e3218rv0
+Authorization: Bearer {{access_token}}
+
+
+### PATCH
+PATCH {{url_api}}/campaigns/send/d5i1kaqpg3t8k7vkkoi0
+Authorization: Bearer {{access_token}}
+
+### DELETE
+DELETE {{url_api}}/campaigns/delete/d5i1kaqpg3t8k7vkkoi0
+Authorization: Bearer {{access_token}}
+
+
+### Keycloak - Machine to Machine
+POST {{url_keycloak}}
+Content-Type: application/x-www-form-urlencoded
+
+client_id=emailsenderclient&client_secret=haRNCCTPgnFj9LHuSViVnWbzH9PBzBAm&grant_type=client_credentials
+
+### Keycloak - User & Password
+# @name token
+POST {{url_keycloak}}
+Content-Type: application/x-www-form-urlencoded
+
+client_id=emailsenderclient&username=fabiokusaba&password=123456&grant_type=password
+
+###
+@access_token = {{token.response.body.access_token}}
