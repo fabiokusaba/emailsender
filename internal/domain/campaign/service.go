@@ -100,12 +100,17 @@ func (s *ServiceImpl) SendEmail(id string) error {
 		return errors.New("campaign is not available to send email")
 	}
 
-	err = s.SendMail(campaignSaved)
-	if err != nil {
-		return internalerrors.ErrInternal
-	}
+	go func() {
+		err := s.SendMail(campaignSaved)
+		if err != nil {
+			campaignSaved.Fail()
+		} else {
+			campaignSaved.Done()
+		}
+		s.Repository.Update(campaignSaved)
+	}()
 
-	campaignSaved.Done()
+	campaignSaved.Started()
 
 	err = s.Repository.Update(campaignSaved)
 	if err != nil {
