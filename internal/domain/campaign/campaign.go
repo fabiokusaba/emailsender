@@ -26,7 +26,7 @@ type Campaign struct {
 	ID        string    `validate:"required" gorm:"primaryKey;size:50;not null"`
 	Name      string    `validate:"min=5,max=24" gorm:"size:100;not null"`
 	CreatedOn time.Time `validate:"required" gorm:"type:timestamp with time zone;not null"`
-	UpdatedOn time.Time `validate:"required" gorm:"type:timestamp with time zone"`
+	UpdatedOn time.Time `gorm:"type:timestamp with time zone"`
 	Content   string    `validate:"min=5,max=1024" gorm:"type:text;not null"`
 	Contacts  []Contact `validate:"min=1,dive"`
 	Status    string    `gorm:"size:20;not null"`
