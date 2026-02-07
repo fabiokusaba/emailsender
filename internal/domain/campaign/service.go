@@ -90,6 +90,17 @@ func (s *ServiceImpl) Delete(id string) error {
 	return nil
 }
 
+func (s *ServiceImpl) Start(campaignSaved *Campaign) {
+	err := s.SendMail(campaignSaved)
+	if err != nil {
+		campaignSaved.Fail()
+	} else {
+		campaignSaved.Done()
+	}
+
+	s.Repository.Update(campaignSaved)
+}
+
 func (s *ServiceImpl) SendEmail(id string) error {
 	campaignSaved, err := s.Repository.GetById(id)
 	if err != nil {
@@ -100,15 +111,7 @@ func (s *ServiceImpl) SendEmail(id string) error {
 		return errors.New("campaign is not available to send email")
 	}
 
-	go func() {
-		err := s.SendMail(campaignSaved)
-		if err != nil {
-			campaignSaved.Fail()
-		} else {
-			campaignSaved.Done()
-		}
-		s.Repository.Update(campaignSaved)
-	}()
+	go s.Start(campaignSaved)
 
 	campaignSaved.Started()
 
